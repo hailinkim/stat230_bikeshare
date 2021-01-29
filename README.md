@@ -62,14 +62,39 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 
 - Adjusted Temperature and Count are the most correlated, but the relationship is not linear; it curves.
 
+---
+
 ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/scatterplot2.png)
 
 - Humidity vs. Count, on the other hand, is difficult to discern any relationship from.
 
+---
+
 ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/boxplot.png)
 
 - Every level of the weather variable had a different median count
-  ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/boxplot2.png)
+
+---
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/boxplot2.png)
+
 - There was a major drop in median count in Spring compared to other months
 
 - Very little difference in medians between working days and non working days.
+
+---
+
+# Model Fitting
+
+## We fitted two **multiple linear regression** models for casual and registered users. We used **best subset selection** to decide on variables.
+
+## Model 1 - for Casual
+
+- We used the five-predictor model
+  ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/summary.png)
+  We used the five-predictor model that contained _season, working day, feeling temperature, humidity and wind speed._ All predictors excpt the indicator variable seasonFall were significant at any reasonable significance level. This simply means that the number of casual users in fall is not significantly different from the number of bikes rented in spring, the reference level, but we decided to use all categories of season.
+
+---
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/summary2.png)
+For the registered model, the full model has the lowest Cp and highest adjusted R-squared. Although the adjusted R-squared does not increase by substantial amount starting from the five predictor model, we use the _kitchen sink model._ The sumary output shows that only the indicator variable weathersitLow Precip has large p-value, which means the difference in the mean number of registered users between low and high precipitation is not significant. However, we kept all categories for weather situation in our model.
