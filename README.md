@@ -11,7 +11,7 @@
 
 # Data
 
-There were 731 observations, each matching a day between 2011 and 2012 in the Capital Bike Share system, with weather and seasonal data from the Washington National weather station in DC, all taken from the UCI Machine Learning Repository.
+## There were 731 observations, each matching a day between 2011 and 2012 in the Capital Bike Share system, with weather and seasonal data from the Washington National weather station in DC, all taken from the UCI Machine Learning Repository.
 
 ## Variables(used in final model)
 
@@ -29,3 +29,15 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 3. **casual**: The number of casual bikesharers on that day.
 4. **registered**: The number of registered bikesharers on that day.
 5. **cnt**: The number of total bikesharers on that day.
+
+---
+
+# Univariate Analysis
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/a1fe82b660da02b0843eea93e716bb5bfcc68617/plots/histogram.png)
+
+Data takes normal form with response variable, count.
+
+- Adjusted Temperature and Humidity found to be most relevant numerical variables
+- WorkingDay, WeatherSit, and Season most relevant categorical variables
+- Casual and Registered not included as predictors - will later be used to make separate models
