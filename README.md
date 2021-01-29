@@ -86,7 +86,7 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 
 # Model Fitting
 
-## We fitted two **multiple linear regression** models for casual and registered users. We used **best subset selection** to decide on variables.
+We fitted two **multiple linear regression** models for casual and registered users. We used **best subset selection** to decide on variables.
 
 ## Model 1 - for Casual
 
@@ -97,6 +97,24 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 
 ---
 
+## Model 2 - for Registered
+
 ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/summary2.png)
 
 For the registered model, the full model has the lowest Cp and highest adjusted R-squared. Although the adjusted R-squared does not increase by substantial amount starting from the five predictor model, we use the **_kitchen sink model._** The sumary output shows that only the indicator variable weathersitLow Precip has large p-value, which means the difference in the mean number of registered users between low and high precipitation is not significant. However, we kept all categories for weather situation in our model.
+
+---
+
+## Conditions
+
+<figure>
+  <img src="https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/residual.png" alt="residual plot"/>
+  <figcaption> Residuals vs Fitted Plot for Casual</figcaption>
+</figure>
+
+<figure>
+  <img src="https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/residual2.png" alt="residual plot"/>
+  <figcaption> Residuals vs Fitted Plot for Registered</figcaption>
+</figure>
+
+The conditions were not met in either model. These unmet conditions were not helped by transforming variables.
