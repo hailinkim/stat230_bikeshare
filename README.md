@@ -35,6 +35,7 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 # Univariate Analysis
 
 ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/a1fe82b660da02b0843eea93e716bb5bfcc68617/plots/histogram.png)
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/histogram2.png)
 
 - Data takes normal form with response variable, count.
 
