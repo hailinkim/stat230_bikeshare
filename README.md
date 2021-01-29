@@ -43,7 +43,9 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 - WorkingDay, WeatherSit, and Season most relevant categorical variables
 - Casual and Registered not included as predictors - will later be used to make separate models
 - Normalized feeling temperature between Q1: 0.338 and Q3: 0.608.
+
   ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/favstats.png)
+
 - More than double working days than non-working days.
 - Most days had no or low precipitation.
 
@@ -54,5 +56,7 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/scatterplot.png)
 
 - Adjusted Temperature and Count are the most correlated, but the relationship is not linear; it curves.
+
   ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/scatterplot2.png)
+
 - Humidity vs. Count, on the other hand, is difficult to discern any relationship from
