@@ -39,12 +39,17 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/a1fe82b660da02b0843eea93e716bb5bfcc68617/plots/histogram.png)
 
 - Data takes normal form with response variable, count.
-- Adjusted Temperature and Humidity found to be most relevant numerical variables
-- WorkingDay, WeatherSit, and Season most relevant categorical variables
-- Casual and Registered not included as predictors - will later be used to make separate models
+
+---
+
+- Adjusted Temperature and Humidity found to be most relevant numerical variables.
+- WorkingDay, WeatherSit, and Season most relevant categorical variables.
+- Casual and Registered not included as predictors - will later be used to make separate models.
 - Normalized feeling temperature between Q1: 0.338 and Q3: 0.608.
 
-  ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/favstats.png)
+---
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/favstats.png)
 
 - More than double working days than non-working days.
 - Most days had no or low precipitation.
@@ -57,6 +62,14 @@ There were 731 observations, each matching a day between 2011 and 2012 in the Ca
 
 - Adjusted Temperature and Count are the most correlated, but the relationship is not linear; it curves.
 
-  ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/scatterplot2.png)
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/scatterplot2.png)
 
-- Humidity vs. Count, on the other hand, is difficult to discern any relationship from
+- Humidity vs. Count, on the other hand, is difficult to discern any relationship from.
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/boxplot.png)
+
+- Every level of the weather variable had a different median count
+  ![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/boxplot2.png)
+- There was a major drop in median count in Spring compared to other months
+
+- Very little difference in medians between working days and non working days.
