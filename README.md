@@ -107,6 +107,8 @@ For the registered model, the full model has the lowest Cp and highest adjusted 
 
 ## Conditions
 
+The conditions were not met in either model. These unmet conditions were not helped by transforming variables.
+
 <figure>
   <img src="https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/residual.png" alt="residual plot"/>
   <figcaption> Residuals vs Fitted Plot for Casual</figcaption>
@@ -117,4 +119,27 @@ For the registered model, the full model has the lowest Cp and highest adjusted 
   <figcaption> Residuals vs Fitted Plot for Registered</figcaption>
 </figure>
 
-The conditions were not met in either model. These unmet conditions were not helped by transforming variables.
+---
+
+# Randomization Procedure
+
+We ran permutation tests to test the statistical significance of our models.
+
+## Randomization for Casual
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/permutation.png)
+
+We shuffled the response variable to test the significance of the entire model for casual bikers using R-squared.The original R-squared of 65% falls at an extreme point in the right tail of the distribution. Thus, there is an evidence to conclude that our casual model is significant.
+
+## Randomization for Registered
+
+![Image](https://github.com/hailinkim/stat230_bikeshare/blob/main/plots/permutation2.png)
+
+We shuffled the response variable to test the significance of the entire model for registered users using R-squared.The original R-squared of 52% falls at an extreme point in the right tail of the distribution. Thus, there is an evidence to conclude that our registered model is also significant.
+
+# Conclusion
+
+- The two MLR models seem to predict the number of bike rentals for casual and registered users well.
+- The predictors of the model for casual bikers and the model for registered users differ.
+- Can understand how the rental behaviors of different users are affected by weather and temporal factors
+- Useful for optimizing the service for casual and registered users
