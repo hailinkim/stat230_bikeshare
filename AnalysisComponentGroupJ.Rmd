@@ -1,0 +1,140 @@
+---
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+### STAT 230 - Analysis Component Group J
+
+```{r, include=FALSE}
+library(mosaic)
+library(readr)
+library(dplyr)
+```
+
+Names: Group J
+
+(Tentative) Project Title: Bike Share Demand Prediction
+
+### Read in the data
+
+```{r}
+bike <- read.csv("https://awagaman.people.amherst.edu/stat230/bikerental.csv")
+```
+
+### Summary command on data set
+
+```{r}
+bike <-  mutate(bike, season = cut(season, breaks = c(.5, 1.5, 2.5, 3.5, 4.5), labels = c("Spring", "Summer", "Fall", "Winter"), include.lowest = TRUE))
+bike <- mutate(bike, yr = cut(yr, breaks = c(-.5, .5, 1.5), labels = c("2011", "2012"), include.lowest = TRUE))
+bike <- mutate(bike, mnth = cut(mnth, breaks = c(.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5), labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), include.lowest = TRUE))
+bike <- mutate(bike, holiday = cut(holiday, breaks = c(-.5, .5, 1.5), labels = c("Not Holiday", "Holiday"), include.lowest = TRUE))
+bike <- mutate(bike, workingday = cut(workingday, breaks = c(-.5, .5, 1.5), labels = c("Not Workingday", "Workingday"), include.lowest = TRUE))
+bike <- mutate(bike, weekday = cut(weekday, breaks = c(-.5, .5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5), labels = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"), include.lowest = TRUE))
+bike <- mutate(bike, weathersit = cut(weathersit, breaks = c(.5, 1.5, 2.5, 3.5, 4.5), labels = c("No Precip", "Low Precip", "Med Precip", "High Precip"), include.lowest = TRUE))
+
+
+
+summary(bike)
+```
+
+
+### Data Codebook
+
+List your variables and whether they are quantitative/qualitative (numeric vs categorical), along with other notes about the variables. Hint, to make a nice list, you need to put two spaces at the end of each line to force RMarkdown to start a new line. Check this out below:
+
+Our variables are:  
+Variable 1 - season. This is a categorical variable representing the season of the day in question  
+Variable 2 -  yr. This is a categorical variable representing whether the day is in 2011 or 2012, the two years covered in this dataset.  
+Variable 3 - mnth. This is a categorical variable representing the month the day is in.   
+Variable 4 - holiday. This is a categorical variable representing whether the day is a holiday or not.
+Variable 5 - weekday. This is a categorical variable representing which weekday the day is  
+Variable 6 - workingday. This is a categorical variable representing whether the day is a weekend/holiday or not  
+Variable 7 - weathersit. This is a categorical variable representing the type of weather on the day in question.  
+Variable 8 - temp. This is a numerical variable representing the temperature of the day normalized.    
+Variable 9 - atemp. This is a numerical variable representing the feeling temperature of the day normalized    
+Variable 10 - hum. This is a numerical variable representing the humidity of the day normalized  
+Variable 11 - windspeed. This is a numerical variable representing the windspeed for the day normalized  
+Variable 12- casual. This is a numerical variable representing the number of casual bikesharers on that day  
+Variable 13 - registered. This is a numerical variable representing the number of registered bikesharers on that day  
+Variable 14 - cnt. This is a numerical variable representing the number of total bikesharers that day.   
+
+
+### Analysis Plan
+
+For our model, we want cnt to be our outcome variable, as it seems that it will be the most useful measure to predict. To help our model creation, we will first conduct univariate analysis on the cnt variable and some other possible predictor variables. We will then conduct bivariate anaylses to both assess the relationship between cnt and potential predictor variables and to check for possible collinearity issues. Our goal is to create an SLR and then use a "kitchen sink" MLR along with one of the automated methods to create a "good" MLR model. 
+
+#### Prelim Univariate Analysis
+
+Obtain basic univariate descriptive statistics and graphs for variables relevant to your analysis.
+
+```{r}
+favstats(~ cnt, data = bike)
+gf_dhistogram(~ cnt, data = bike) %>% 
+  gf_labs(title = "Histogram for Number of Bike rentals")
+
+favstats(~atemp, data=bike)
+gf_dhistogram(~ atemp, data = bike) %>% 
+  gf_labs(title = "Histogram for Number of Normalized Feeling Temperature")
+
+favstats(~hum, data=bike)
+gf_dhistogram(~ hum, data = bike) %>% 
+  gf_labs(title = "Histogram for Number of Normalized Humidity")
+
+```
+With regards to the cnt variable, we see that the mean number is 4504.349 on any given day, while the median is 4548. We can thus conclude that the data should take a somewhat normal form, as can be reaffirmed by the histogram.  The histogram shows that the number of bikes rented on a particular day mostly lie between 3000 and 6000. When looking at the other numerical variables, two of the most relevant seem to be feeling temperature and humidity.  The first quartile of the normalized feeling temperature is 0.338, and the third quartile is 0.608. Humidity is mostly between 0.5 and 0.7.
+
+```{r}
+tally(~workingday, data=bike)
+
+tally(~weathersit, data=bike)
+
+```
+
+With regards to categorical variables, the two that we decided to analyze are workingday and weathersit. First, we see that there are 231 Not Workingdays and 500 Workingdays. We also see that most of the days in question are either no precipitation days or low precipitation days, with only 21 days having medium precipitation, and none having no precipitaiton.  
+
+#### Prelim Bivariate Analysis
+
+Scatterplots and side-by-side boxplots to examine a bivariate relationships. 
+
+```{r}
+#you might use
+#bwplot or xyplot
+with(bike, cor(temp, atemp))
+with(bike, cor(cnt, casual))
+with(bike, cor(cnt, registered))
+
+```
+
+COMMENT on what you see!
+
+First we explored possible collinearity in our predictor variables. As expected, temp and atemp demonstrate strong collinearity, so removing one or the other may make for a more effective model. Other expected strong collinearities come from cnt vs casual and registered, which are both subsets of the overall count. However, other than some other obvious examples, none of th other pairs of numerical variables had high collinearity.
+
+```{r}
+gf_point(cnt ~ temp, data = bike)%>% 
+  gf_labs(title = "Scatterplot for Count vs Normalized Temperature")
+gf_boxplot(cnt ~ weathersit, data = bike)%>% 
+  gf_labs(title = "Boxplot for Count vs Weather Situation")
+gf_point(cnt ~ hum, data = bike)%>% 
+  gf_labs(title = "Scatterplot for Count vs Humidity")
+gf_boxplot(cnt ~ workingday, data = bike)%>% 
+  gf_labs(title = "Boxplot for Count vs Working Day")
+gf_boxplot(cnt ~ season, data = bike)%>% 
+  gf_labs(title = "Boxplot for Count vs Season")
+```
+
+We then decided to look at the relation between the count variable and an assortment of possible predictors. With regards to the numerical predictors, temperature has the most linear relationship, while humidity and windspeed are not so clear cut. Looking at the categorical predictors, we see clear differences in the mean count between the different weather sitations and the different seasons. Surprisingly, there is little difference between the mean count on both working days and not working days. We can now proceed with confidence into creating our own model for the data.
+
+#### Randomization-Based Procedure Thoughts
+
+When thinking about the randomization procedure, we should also consider the collinearities we have established today. It may be worth eliminating some before starting the method. I also think that the best way to start the potential SLR is to use the temp variable as the predictor.
+
+
+### Questions for me

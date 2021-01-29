@@ -1,0 +1,145 @@
+---
+output:
+  pdf_document:
+    fig_height: 3
+    fig_width: 5
+  html_document:
+    fig_height: 3
+    fig_width: 5
+  word_document:
+    fig_height: 3
+    fig_width: 5
+---
+
+## Technical Appendix - Stat 230 Project - Group J
+
+```{r, include=FALSE}
+library(mosaic)
+library(readr)
+library(dplyr)
+library(leaps)
+library(broom)
+```
+
+## Data Read In
+
+```{r}
+bike <- read.csv("https://awagaman.people.amherst.edu/stat230/bikerental.csv")
+```
+
+## Data Section 
+
+### Variable Transformations
+
+```{r}
+bike <-  mutate(bike, season = cut(season, breaks = c(.5, 1.5, 2.5, 3.5, 4.5), labels = c("Spring", "Summer", "Fall", "Winter"), include.lowest = TRUE))
+bike <- mutate(bike, yr = cut(yr, breaks = c(-.5, .5, 1.5), labels = c("2011", "2012"), include.lowest = TRUE))
+bike <- mutate(bike, mnth = cut(mnth, breaks = c(.5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5, 7.5, 8.5, 9.5, 10.5, 11.5, 12.5), labels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"), include.lowest = TRUE))
+bike <- mutate(bike, holiday = cut(holiday, breaks = c(-.5, .5, 1.5), labels = c("Not Holiday", "Holiday"), include.lowest = TRUE))
+bike <- mutate(bike, workingday = cut(workingday, breaks = c(-.5, .5, 1.5), labels = c("Not Workingday", "Workingday"), include.lowest = TRUE))
+bike <- mutate(bike, weekday = cut(weekday, breaks = c(-.5, .5, 1.5, 2.5, 3.5, 4.5, 5.5, 6.5), labels = c("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"), include.lowest = TRUE))
+bike <- mutate(bike, weathersit = cut(weathersit, breaks = c(.5, 1.5, 2.5, 3.5, 4.5), labels = c("No Precip", "Low Precip", "Med Precip", "High Precip"), include.lowest = TRUE))
+```
+
+We mutated the data set to transform the numeric varaiables with discrete values into categorical variables.
+
+## Model Fitting
+
+### Model 1 - MLR for Casual
+```{r}
+best <- regsubsets(casual ~ season + workingday + weathersit + atemp + hum + windspeed, data = bike, nbest = 1)
+with(summary(best), data.frame(rsq, adjr2, cp, rss, outmat))
+
+casual <- lm(casual ~ season + workingday + atemp +  hum + windspeed, data=bike)
+msummary(casual)
+```
+
+Although the best subset shows that the full model has the lowest Mallow’s Cp, adjusted R-squared improves in very small increments with every additional predictor after four. So we use the five-predictor model that season, working day, feeling temperature, humidity and wind speed.
+
+All predictors excpt the indicator variable seasonFall are significant at any reasonable significance level. This simply means that the number of casual users in fall is not significantly different from the number of bikes rented in spring, the reference level, but we decided to use al categories of season.
+
+```{r}
+car::vif(casual)
+mplot(casual, which = 1)
+mplot(casual, which = 2)
+```
+
+The residual versus fited plot sufers from increasing variation, and the QQ plot has points falling off from the line.
+
+### Model 2 - MLR for Registered
+```{r}
+registered <- lm(registered ~ season + workingday + weathersit + atemp + hum + windspeed, data = bike) 
+msummary(registered)
+
+best2 <- regsubsets(registered ~ season + workingday + weathersit + atemp + hum + windspeed, data = bike, nbest = 1)
+with(summary(best2), data.frame(rsq, adjr2, cp, rss, outmat))
+
+car::vif(registered)
+mplot(registered, which = 1)
+mplot(registered, which = 2)
+```
+
+For the registered model, the full model has the lowest Cp and highest adjusted R-squared. Although the adjusted R-squared does not increase by substantial amount starting from the five predictor model, we use the full model. The sumary output shows that only the indicator variable weathersitLow Precip has large p-value, which means the difference in the mean number of registered users between low and high precipitation is not significant. However, we kept all categories for weather situation in our model.
+
+## Randomization Procedure(s)
+
+#Randomization for Casual
+```{r}
+#test for the significance of humidity in the model for causal bikers
+humslope <- coef(casual)[7]
+set.seed(78) 
+h <- do(10000) * lm(casual ~ season + workingday + atemp + shuffle(hum) + windspeed, data=bike)$coefficients
+names(h)
+gf_dens(~ hum, data = h) %>% 
+  gf_lims(x = c(-1000, 400)) %>% 
+  gf_labs(title = "Slope Coefficients of Humidity for Casual Model") %>% 
+  gf_vline(xintercept = ~ humslope, color = "red")
+qdata(~ hum, c(0.025, 0.975), data = h)
+```
+
+We ran a permutation test by shuffling humidity in casual model, in order to assess if humidity is adding any information to the model The actual slope coefficient of -897.56 for humidity in the model for casual bikers do not not fall in a typical place in the randomization distribution. Also, it lies above the 95% confidence interval for the slope coefficient when the relationship is destroyed. Thus, we reject the null hypothesis of no relationship and conclude that humidity is a significant predictor of number of casual users when other predictors are in the models.
+
+```{r}
+#test for the significance of the whole model
+actual.rsquared <- rsquared(casual) 
+s <- do(10000) * rsquared(lm(shuffle(casual) ~ season + workingday + atemp + hum + windspeed, data=bike))
+names(s)
+gf_dens(~ rsquared, data = s) %>% 
+  gf_lims(x = c(0, 0.8)) %>% 
+  gf_labs(title = "RSquared for Casual MLR with Shuffled Response") %>% 
+  gf_vline(xintercept = ~ actual.rsquared, color = "red")
+```
+
+We shuffled the response variable to test the significance of the entire model for casual bikers using R-squared.The original R-squared of 65% falls at an extreme point in the right tail of the distribution. Thus, there is an evidence to conclude that our casual model is significant.
+
+#Randomization for Registered
+```{r}
+#test for the significance of humidity in the model for registered members
+humslope2 <- coef(registered)[9]
+set.seed(78) 
+h2 <- do(10000) * lm(registered ~ season + workingday + weathersit + atemp + shuffle(hum), data=bike)$coefficients
+names(h2)
+gf_dens(~ hum, data = h2) %>% 
+  gf_lims(x = c(-1700, 400)) %>% 
+  gf_labs(title = "Slope Coefficients of Humidity for Registered MLR with Shuffled Humidity") %>% 
+  gf_vline(xintercept = ~ humslope2, color = "red")
+qdata(~ hum, c(0.025, 0.975), data = h2)
+```
+
+Just like in the casual model, we shuffled humidity to examine its significance in the presence of other predictors in the registered model. The actual slope coefficient of -1962.02 for humidity in the model for registered members does not not fall in a typical place in the randomization distribution. Also, it lies above the 95% confidence interval for the slope coefficient when the relationship is destroyed. Thus, we reject the null hypothesis of no relationship and conclude that humidity is a significant predictor of number of casual users when other predictors are in the models.
+
+```{r}
+#tests for the whole model
+actual.rsquared2 <- rsquared(registered)
+t <- do(10000) * rsquared(lm(shuffle(registered) ~ season + workingday + weathersit + atemp + hum + windspeed, data=bike))
+names(t)
+gf_dens(~ rsquared, data = t) %>% 
+  gf_lims(x = c(0, 0.7)) %>% 
+  gf_labs(title = "RSquared for Registered MLR with Shuffled Response") %>% 
+  gf_vline(xintercept = ~ actual.rsquared2, color = "red")
+```
+
+We shuffled the response variable to test the significance of the entire model for registered users using R-squared.The original R-squared of 52% falls at an extreme point in the right tail of the distribution. Thus, there is an evidence to conclude that our registered model is also significant.
+
+## Results
+The final MLR predictor model for rentals by casual users had 5 predictors: season, workingday, windspeed, atemp, and hum. The final model for registered users had 6 predictors: season, workingday, windspeed, atemp, hum, and weathersit. They had R-squared values of 0.6534 and 0.5243, respectively, which represent good fits for real data. The permutation tests for both models confirm that the entire models are significant.
