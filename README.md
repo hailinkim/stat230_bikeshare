@@ -10,3 +10,22 @@
 ---
 
 # Data
+
+There were 731 observations, each matching a day between 2011 and 2012 in the Capital Bike Share system, with weather and seasonal data from the Washington National weather station in DC, all taken from the UCI Machine Learning Repository.
+
+## Variables(used in final model)
+
+### Categorical variables
+
+1. **Season**: The season of the day.
+2. **Holiday**: Whether the day is a holiday or not.
+3. **Workingday**: Whether the day is a holiday/weekend or not.
+4. **Weathersit**: The type of weather on the day in question.
+
+### Numerical variables
+
+1. **atemp**: The normalized feeling temperature of the day.
+2. **hum**: The normalized humidity of the day.
+3. **casual**: The number of casual bikesharers on that day.
+4. **registered**: The number of registered bikesharers on that day.
+5. **cnt**: The number of total bikesharers on that day.
